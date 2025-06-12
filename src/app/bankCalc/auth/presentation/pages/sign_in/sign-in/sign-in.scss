@@ -1,0 +1,92 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+  padding: 1rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  max-width: 380px;
+  width: 100%;
+  animation: fadeIn 0.6s ease-in-out;
+  transition: box-shadow 0.3s ease;
+}
+
+.login-form:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.login-form h2 {
+  margin-bottom: 2rem;
+  font-size: 1.75rem;
+  color: #333;
+  font-weight: 600;
+  text-align: center;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+mat-form-field input {
+  font-size: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+button[disabled] {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed;
+}
+
+.signup-link {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.link {
+  color: #1976d2;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  margin-left: 0.25rem;
+
+  &:hover {
+    color: #1565c0;
+    text-decoration: underline;
+  }
+}
+
+/* Animación de entrada */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

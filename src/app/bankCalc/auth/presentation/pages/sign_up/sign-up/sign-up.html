@@ -1,0 +1,99 @@
+<div class="signup-container">
+  <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()" class="signup-form" novalidate>
+    <h2>Crear Cuenta</h2>
+
+    <!-- Campo de nombre -->
+    <mat-form-field appearance="fill">
+      <mat-label>Nombre completo</mat-label>
+      <input matInput
+             type="text"
+             formControlName="name"
+             placeholder="Tu nombre"
+             required
+             maxlength="100"
+             autocomplete="name">
+      <mat-error *ngIf="name.invalid && (name.dirty || name.touched)">
+        <ng-container *ngIf="name.errors?.['required']">
+          El nombre es requerido
+        </ng-container>
+        <ng-container *ngIf="name.errors?.['minlength']">
+          El nombre debe tener al menos 2 caracteres
+        </ng-container>
+        <ng-container *ngIf="name.errors?.['maxlength']">
+          El nombre no puede tener más de 100 caracteres
+        </ng-container>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Campo de correo -->
+    <mat-form-field appearance="fill">
+      <mat-label>Correo electrónico</mat-label>
+      <input matInput
+             type="email"
+             formControlName="email"
+             placeholder="ejemplo@email.com"
+             required
+             maxlength="100"
+             autocomplete="email">
+      <mat-error *ngIf="email.invalid && (email.dirty || email.touched)">
+        <ng-container *ngIf="email.errors?.['required']">
+          El correo electrónico es requerido
+        </ng-container>
+        <ng-container *ngIf="email.errors?.['email']">
+          Por favor ingresa un correo electrónico válido
+        </ng-container>
+        <ng-container *ngIf="email.errors?.['maxlength']">
+          El correo no puede tener más de 100 caracteres
+        </ng-container>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Campo de contraseña -->
+    <mat-form-field appearance="fill">
+      <mat-label>Contraseña</mat-label>
+      <input matInput
+             type="password"
+             formControlName="password"
+             required
+             maxlength="255"
+             autocomplete="new-password">
+      <mat-error *ngIf="password.invalid && (password.dirty || password.touched)">
+        <ng-container *ngIf="password.errors?.['required']">
+          La contraseña es requerida
+        </ng-container>
+        <ng-container *ngIf="password.errors?.['minlength']">
+          La contraseña debe tener al menos 6 caracteres
+        </ng-container>
+        <ng-container *ngIf="password.errors?.['maxlength']">
+          La contraseña no puede tener más de 255 caracteres
+        </ng-container>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Campo de confirmar contraseña -->
+    <mat-form-field appearance="fill">
+      <mat-label>Confirmar contraseña</mat-label>
+      <input matInput
+             type="password"
+             formControlName="confirmPassword"
+             required
+             autocomplete="new-password">
+      <mat-error *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)">
+        <ng-container *ngIf="confirmPassword.errors?.['required']">
+          Por favor confirma tu contraseña
+        </ng-container>
+        <ng-container *ngIf="confirmPassword.errors?.['passwordMismatch']">
+          Las contraseñas no coinciden
+        </ng-container>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Botón -->
+    <button mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="signUpForm.invalid">
+      Registrarse
+    </button>
+  </form>
+</div> 

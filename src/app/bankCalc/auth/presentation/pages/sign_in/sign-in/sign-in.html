@@ -1,0 +1,56 @@
+<div class="login-container">
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" novalidate>
+    <h2>Iniciar Sesión</h2>
+
+    <!-- Campo de correo -->
+    <mat-form-field appearance="fill">
+      <mat-label>Correo electrónico</mat-label>
+      <input matInput
+             type="email"
+             formControlName="email"
+             placeholder="ejemplo@email.com"
+             required
+             autocomplete="email">
+      <mat-error *ngIf="email.invalid && (email.dirty || email.touched)">
+        <ng-container *ngIf="email.errors?.['required']">
+          El correo electrónico es requerido
+        </ng-container>
+        <ng-container *ngIf="email.errors?.['email']">
+          Por favor ingresa un correo electrónico válido
+        </ng-container>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Campo de contraseña -->
+    <mat-form-field appearance="fill">
+      <mat-label>Contraseña</mat-label>
+      <input matInput
+             type="password"
+             formControlName="password"
+             required
+             autocomplete="current-password">
+      <mat-error *ngIf="password.invalid && (password.dirty || password.touched)">
+        <ng-container *ngIf="password.errors?.['required']">
+          La contraseña es requerida
+        </ng-container>
+        <ng-container *ngIf="password.errors?.['minlength']">
+          La contraseña debe tener al menos 6 caracteres
+        </ng-container>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Botón -->
+    <button mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="loginForm.invalid">
+      Iniciar Sesión
+    </button>
+
+    <!-- Link para registrarse -->
+    <div class="signup-link">
+      ¿No tienes una cuenta? 
+      <a (click)="navigateToSignUp()" class="link">Regístrate aquí</a>
+    </div>
+  </form>
+</div>
