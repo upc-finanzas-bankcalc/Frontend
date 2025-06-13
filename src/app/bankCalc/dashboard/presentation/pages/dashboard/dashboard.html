@@ -1,0 +1,123 @@
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h1>Dashboard de Análisis de Bonos</h1>
+            <p>Análisis Financiero Integral - Bonos Corporativos</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Información Básica del Bono -->
+            <div class="info-section">
+                <h2>Información Básica del Bono</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Nombre del Bono:</label>
+                        <span id="bondName">Bono Corporativo ABC S.A.</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Valor Nominal:</label>
+                        <span id="nominalValue">S/ 1,000,000</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Valor Comercial:</label>
+                        <span id="commercialValue">S/ 950,000</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Plazo:</label>
+                        <span id="term">5 años</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Frecuencia de Pago:</label>
+                        <span id="paymentFreq">Semestral</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Tasa de Interés:</label>
+                        <span id="interestRate">8.5% anual</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Tipo de Tasa:</label>
+                        <span id="rateType">Efectiva</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Plazo de Gracia:</label>
+                        <span id="gracePeriod">6 meses (Total)</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Moneda:</label>
+                        <span id="currency">Soles (PEN)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indicadores Financieros Clave -->
+            <div class="kpi-grid">
+                <div class="kpi-card pulse">
+                    <h3>TCEA</h3>
+                    <div class="kpi-value" id="tcea">9.24</div>
+                    <div class="kpi-unit">% anual</div>
+                </div>
+                <div class="kpi-card">
+                    <h3>TREA</h3>
+                    <div class="kpi-value" id="trea">8.86</div>
+                    <div class="kpi-unit">% anual</div>
+                </div>
+                <div class="kpi-card">
+                    <h3>Duración</h3>
+                    <div class="kpi-value" id="duration">4.35</div>
+                    <div class="kpi-unit">años</div>
+                </div>
+                <div class="kpi-card">
+                    <h3>Duración Modificada</h3>
+                    <div class="kpi-value" id="modDuration">4.18</div>
+                    <div class="kpi-unit">años</div>
+                </div>
+                <div class="kpi-card">
+                    <h3>Convexidad</h3>
+                    <div class="kpi-value" id="convexity">22.45</div>
+                    <div class="kpi-unit">años²</div>
+                </div>
+                <div class="kpi-card">
+                    <h3>Precio Máximo</h3>
+                    <div class="kpi-value" id="maxPrice">1,047,250</div>
+                    <div class="kpi-unit">soles</div>
+                </div>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="charts-section">
+                <div class="chart-container">
+                    <h3>Flujo de Caja por Período</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="cashFlowChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h3>Composición de Pagos</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="paymentCompositionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Flujo de Caja -->
+            <div class="table-container">
+                <h3>Detalle del Flujo de Caja</h3>
+                <table id="cashFlowTable">
+                    <thead>
+                        <tr>
+                            <th>Período</th>
+                            <th>Cuota Total</th>
+                            <th>Interés</th>
+                            <th>Amortización</th>
+                            <th>Saldo Pendiente</th>
+                            <th>Flujo Neto</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cashFlowTableBody">
+                        <!-- Datos se llenarán con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
