@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js/auto';
+import { Router } from '@angular/router';
 
 interface CashFlowData {
   period: number;
@@ -17,6 +18,8 @@ interface CashFlowData {
   styleUrl: './dashboard.scss'
 })
 export class Dashboard implements OnInit {
+  constructor(private router: Router) {}
+
   private cashFlowData: CashFlowData[] = [
     { period: 0, totalPayment: 0, interest: 0, amortization: 0, balance: 1000000, netFlow: -950000 },
     { period: 1, totalPayment: 42500, interest: 42500, amortization: 0, balance: 1000000, netFlow: 42500 },
@@ -153,5 +156,25 @@ export class Dashboard implements OnInit {
         });
       }, 50);
     });
+  }
+
+  navigateTo(route: string): void {
+    switch (route) {
+      case 'register':
+        this.router.navigate(['/bond/register']);
+        break;
+      case 'result':
+        this.router.navigate(['/bond/result']);
+        break;
+      case 'history':
+        this.router.navigate(['/bond/history']);
+        break;
+      case 'help':
+        this.router.navigate(['/help']);
+        break;
+      case 'report':
+        this.router.navigate(['/bond/report']);
+        break;
+    }
   }
 }

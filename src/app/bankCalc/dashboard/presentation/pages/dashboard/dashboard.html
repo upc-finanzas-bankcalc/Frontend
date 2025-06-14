@@ -1,5 +1,29 @@
 <body>
     <div class="dashboard-container">
+        <!-- Navigation Section -->
+        <nav class="dashboard-nav">
+            <button class="nav-button" (click)="navigateTo('register')">
+                <i class="fas fa-plus-circle"></i>
+                Registro de Bono
+            </button>
+            <button class="nav-button" (click)="navigateTo('result')">
+                <i class="fas fa-chart-line"></i>
+                Resultado de Bono
+            </button>
+            <button class="nav-button" (click)="navigateTo('history')">
+                <i class="fas fa-history"></i>
+                Historial y Configuración
+            </button>
+            <button class="nav-button" (click)="navigateTo('help')">
+                <i class="fas fa-question-circle"></i>
+                Ayuda
+            </button>
+            <button class="nav-button" (click)="navigateTo('report')">
+                <i class="fas fa-file-alt"></i>
+                Reporte
+            </button>
+        </nav>
+
         <div class="header">
             <h1>Dashboard de Análisis de Bonos</h1>
             <p>Análisis Financiero Integral - Bonos Corporativos</p>
