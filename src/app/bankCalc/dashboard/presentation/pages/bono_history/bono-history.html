@@ -1,0 +1,51 @@
+<div class="history-container">
+  <div class="header">
+    <h1>Historial de Bonos</h1>
+    <p>Consulta y gestiona los bonos registrados o analizados previamente.</p>
+  </div>
+
+  <!-- Filtros de búsqueda -->
+  <div class="filters">
+    <input type="text" [(ngModel)]="searchText" placeholder="Buscar por nombre..." class="filter-input" />
+    <input type="date" [(ngModel)]="searchDate" class="filter-input" />
+    <select [(ngModel)]="searchCurrency" class="filter-input">
+      <option value="">Todas las monedas</option>
+      <option *ngFor="let currency of currencies" [value]="currency.code">{{ currency.code }}</option>
+    </select>
+    <button class="btn btn-secondary" (click)="clearFilters()">Limpiar</button>
+  </div>
+
+  <!-- Tabla de historial -->
+  <div class="table-container">
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Fecha</th>
+          <th>Valor Nominal</th>
+          <th>Valor Comercial</th>
+          <th>Plazo</th>
+          <th>Moneda</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let bono of filteredBonos()">
+          <td>Bono #{{ bono.idBono }}</td>
+          <td>{{ bono.fechaCreacion | date:'dd/MM/yyyy' }}</td>
+          <td>{{ bono.valorNominal | currency:bono.moneda:'symbol':'1.2-2' }}</td>
+          <td>{{ bono.valorComercial | currency:bono.moneda:'symbol':'1.2-2' }}</td>
+          <td>{{ bono.numeroAnios }} años</td>
+          <td>{{ bono.moneda }}</td>
+          <td>
+            <button class="btn btn-primary btn-sm" (click)="verDetalle(bono)">Ver Detalle</button>
+            <button class="btn btn-success btn-sm" (click)="exportar(bono)">Exportar</button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredBonos().length === 0">
+          <td colspan="7" class="no-data">No se encontraron bonos con los filtros seleccionados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

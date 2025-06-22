@@ -372,8 +372,43 @@ body {
     }
 }
 
+.no-bond-selected {
+    text-align: center;
+    padding: 80px 40px;
+    margin: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+
+    .icon i {
+        font-size: 4rem;
+        color: #3498db;
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+
+    h2 {
+        font-size: 2rem;
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+
+    p {
+        font-size: 1.1rem;
+        color: #6c757d;
+        margin-bottom: 30px;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+}
+
 .loading {
-    display: none;
+    display: flex;
+    flex-direction: column;
     text-align: center;
     padding: 40px;
 }

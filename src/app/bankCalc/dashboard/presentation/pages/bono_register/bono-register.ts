@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { BonoService } from '../../../../core/services/bono.service';
+import { Bono } from '../../../../core/models/bono.model';
+import { Usuario } from '../../../../core/models/usuario.model';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '../../../../core/services/auth.service';
 
 interface Currency {
   code: string;
@@ -47,7 +53,12 @@ export class BonoRegisterComponent implements OnInit {
     { value: 'parcial', label: 'Parcial' }
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private bonoService: BonoService,
+    private router: Router,
+    private authService: AuthService
+    ) {
     this.bondForm = this.fb.group({
       moneda: ['PEN', [Validators.required]],
       valorNominal: [1000, [Validators.required, Validators.min(0.01)]],
@@ -108,14 +119,46 @@ export class BonoRegisterComponent implements OnInit {
   onSubmit(): void {
     if (this.bondForm.valid) {
       this.loading = true;
-      const formData = this.bondForm.value;
       
-      // Simulate API call
-      setTimeout(() => {
-        console.log('Bond data:', formData);
+      const currentUser = this.authService.currentUserValue;
+      if (!currentUser) {
+        // Handle case where user is not logged in
         this.loading = false;
-        // Here you would typically navigate to the results page
-      }, 2000);
+        alert('Debe iniciar sesión para registrar un bono.');
+        this.router.navigate(['/sign-in']);
+        return;
+      }
+
+      const formData = this.bondForm.value;
+      const bonoData: Bono = {
+        usuario: currentUser,
+        moneda: formData.moneda,
+        valorNominal: formData.valorNominal,
+        valorComercial: formData.valorComercial,
+        frecuenciaPago: formData.frecuenciaPago,
+        numeroAnios: formData.numeroAños,
+        tipoTasa: formData.tipoTasaInteres,
+        tasaAnual: formData.tasaInteresAnual,
+        capitalizacion: formData.capitalizacion,
+        tasaImpuesto: formData.tasaImpuesto,
+        plazoGracia: formData.plazoGracia,
+        tipoGracia: formData.tipoGracia,
+        gastosIniciales: formData.gastosIniciales,
+        gastosFinales: formData.gastosFinales
+      };
+
+      this.bonoService.create(bonoData).subscribe({
+        next: (response: Bono) => {
+          this.loading = false;
+          console.log('Bono created:', response);
+          this.router.navigate(['/dashboard/bond/resultado', response.idBono]);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.loading = false;
+          console.error('Error creating bond:', error);
+     
+        }
+      });
     } else {
       this.showValidationSummary = true;
       this.validationErrors = this.getValidationErrors();

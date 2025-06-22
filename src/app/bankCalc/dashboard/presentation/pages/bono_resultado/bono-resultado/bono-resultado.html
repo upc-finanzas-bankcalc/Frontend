@@ -1,153 +1,164 @@
-<div class="results-container">
-    <div class="header">
-        <h1>Análisis de Bono</h1>
-        <p>Resultados del Cálculo Financiero</p>
+<div class="no-bond-selected" *ngIf="!bondData && !loading && !error">
+    <div class="icon">
+        <i class="fas fa-chart-line"></i>
+    </div>
+    <h2>Visualiza los Resultados de tu Bono</h2>
+    <p>Para ver los detalles, primero debes registrar un nuevo bono o seleccionar uno de tu historial.</p>
+    <div class="actions">
+        <button class="btn btn-primary" (click)="goToRegister()">Registrar Bono</button>
+        <button class="btn btn-secondary" (click)="goToHistory()">Ver Historial</button>
+    </div>
+</div>
+
+<div class="loading" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Cargando resultados...</p>
+</div>
+
+<div *ngIf="error && !loading" class="error-message">
+  {{ error }}
+</div>
+
+<div class="results-container" *ngIf="bondData && bondMetrics && !loading">
+  <div class="header">
+    <h1>Análisis de Bono</h1>
+    <p>Resultados del Cálculo Financiero</p>
+  </div>
+
+  <div class="bond-summary">
+    <div class="summary-item">
+      <div class="summary-label">Valor Nominal</div>
+      <div class="summary-value">{{ formatCurrency(bondData.valorNominal) }}</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Valor Comercial</div>
+      <div class="summary-value">{{ formatCurrency(bondData.valorComercial) }}</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Tasa Cupón</div>
+      <div class="summary-value">{{ bondData.tasaAnual / 100 | percent:'1.2-2' }}</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Plazo</div>
+      <div class="summary-value">{{ bondData.numeroAnios }} años</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Frecuencia</div>
+      <div class="summary-value">{{ getFrecuenciaPago(bondData.frecuenciaPago) }}</div>
+    </div>
+  </div>
+
+  <div class="results-content">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">
+          📊 Indicadores Financieros
+          <span class="tooltip">
+            <span class="tooltip-icon">?</span>
+            <span class="tooltip-text">Métricas clave que evalúan la rentabilidad, riesgo y características del bono desde diferentes perspectivas.</span>
+          </span>
+        </div>
+        <div class="section-subtitle">Métricas de rendimiento y riesgo calculadas</div>
+      </div>
+      <div class="section-content">
+        <div class="indicators-grid">
+          <div class="indicator-card highlight">
+            <div class="indicator-icon">💰</div>
+            <div class="indicator-value">{{ bondMetrics.trea | percent:'1.2-4' }}</div>
+            <div class="indicator-label">TREA</div>
+            <div class="indicator-description">Tasa de Rendimiento Efectivo Anual para el inversor</div>
+          </div>
+          <div class="indicator-card warning">
+            <div class="indicator-icon">💸</div>
+            <div class="indicator-value">{{ bondMetrics.tcea | percent:'1.2-4' }}</div>
+            <div class="indicator-label">TCEA</div>
+            <div class="indicator-description">Tasa de Costo Efectivo Anual para el emisor</div>
+          </div>
+          <div class="indicator-card">
+            <div class="indicator-icon">⏱️</div>
+            <div class="indicator-value">{{ bondMetrics.duracion | number:'1.2-2' }}</div>
+            <div class="indicator-label">Duración</div>
+            <div class="indicator-description">Tiempo promedio ponderado de recuperación de flujos</div>
+          </div>
+          <div class="indicator-card">
+            <div class="indicator-icon">📈</div>
+            <div class="indicator-value">{{ bondMetrics.duracionModificada | number:'1.2-2' }}</div>
+            <div class="indicator-label">Duración Modificada</div>
+            <div class="indicator-description">Sensibilidad del precio ante cambios de tasa</div>
+          </div>
+          <div class="indicator-card">
+            <div class="indicator-icon">🔄</div>
+            <div class="indicator-value">{{ bondMetrics.convexidad | number:'1.2-2' }}</div>
+            <div class="indicator-label">Convexidad</div>
+            <div class="indicator-description">Medida de curvatura para cambios amplios de tasa</div>
+          </div>
+          <div class="indicator-card highlight">
+            <div class="indicator-icon">🎯</div>
+            <div class="indicator-value">{{ formatCurrency(bondMetrics.precioMaximo) }}</div>
+            <div class="indicator-label">Precio Máximo</div>
+            <div class="indicator-description">Precio máximo que pagaría el mercado</div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="bond-summary">
-        <div class="summary-item">
-            <div class="summary-label">Valor Nominal</div>
-            <div class="summary-value">{{ bondData.valorNominal | currency:bondData.moneda:'symbol':'1.2-2' }}</div>
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">
+          💵 Flujo de Caja por Período
+          <span class="tooltip">
+            <span class="tooltip-icon">?</span>
+            <span class="tooltip-text">Detalle completo de todos los flujos de efectivo proyectados durante la vida del bono, incluyendo cupones y amortización.</span>
+          </span>
         </div>
-        <div class="summary-item">
-            <div class="summary-label">Valor Comercial</div>
-            <div class="summary-value">{{ bondData.valorComercial | currency:bondData.moneda:'symbol':'1.2-2' }}</div>
+        <div class="section-subtitle">Cronograma detallado de pagos y flujos netos</div>
+      </div>
+      <div class="section-content">
+        <div class="table-container">
+          <table class="cash-flow-table">
+            <thead>
+              <tr>
+                <th>Período</th>
+                <th>Fecha de Pago</th>
+                <th>Cuota</th>
+                <th>Interés</th>
+                <th>Amortización</th>
+                <th>Saldo Pendiente</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of cashFlowData">
+                <td class="period-cell">{{ row.periodo }}</td>
+                <td>{{ row.fechaPago | date:'dd/MM/yyyy' }}</td>
+                <td class="currency">{{ formatCurrency(row.cuota) }}</td>
+                <td class="currency">{{ formatCurrency(row.interes) }}</td>
+                <td class="currency">{{ formatCurrency(row.amortizacion) }}</td>
+                <td class="currency">{{ formatCurrency(row.saldoPendiente) }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="summary-item">
-            <div class="summary-label">Tasa Cupón</div>
-            <div class="summary-value">{{ bondData.tasaInteresAnual / 100 | percent:'1.2-2' }}</div>
-        </div>
-        <div class="summary-item">
-            <div class="summary-label">Plazo</div>
-            <div class="summary-value">{{ bondData.numeroAnos }} años</div>
-        </div>
-        <div class="summary-item">
-            <div class="summary-label">Frecuencia</div>
-            <div class="summary-value">{{ getFrecuenciaPago(bondData.frecuenciaPago) }}</div>
-        </div>
+      </div>
     </div>
 
-    <div class="results-content">
-        <!-- Indicadores Financieros -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-title">
-                    📊 Indicadores Financieros
-                    <span class="tooltip">
-                        <span class="tooltip-icon">?</span>
-                        <span class="tooltip-text">Métricas clave que evalúan la rentabilidad, riesgo y características del bono desde diferentes perspectivas.</span>
-                    </span>
-                </div>
-                <div class="section-subtitle">Métricas de rendimiento y riesgo calculadas</div>
+    <div class="section">
+        <div class="section-header">
+            <div class="section-title">
+                📊 Visualización de Flujos
             </div>
-            <div class="section-content">
-                <div class="indicators-grid">
-                    <div class="indicator-card highlight">
-                        <div class="indicator-icon">💰</div>
-                        <div class="indicator-value">{{ bondMetrics.trea / 100 | percent:'1.2-2' }}</div>
-                        <div class="indicator-label">TREA</div>
-                        <div class="indicator-description">Tasa de Rendimiento Efectivo Anual para el inversor</div>
-                    </div>
-                    <div class="indicator-card warning">
-                        <div class="indicator-icon">💸</div>
-                        <div class="indicator-value">{{ bondMetrics.tcea / 100 | percent:'1.2-2' }}</div>
-                        <div class="indicator-label">TCEA</div>
-                        <div class="indicator-description">Tasa de Costo Efectivo Anual para el emisor</div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-icon">⏱️</div>
-                        <div class="indicator-value">{{ bondMetrics.duracion | number:'1.2-2' }}</div>
-                        <div class="indicator-label">Duración</div>
-                        <div class="indicator-description">Tiempo promedio ponderado de recuperación de flujos</div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-icon">📈</div>
-                        <div class="indicator-value">{{ bondMetrics.duracionModificada | number:'1.2-2' }}</div>
-                        <div class="indicator-label">Duración Modificada</div>
-                        <div class="indicator-description">Sensibilidad del precio ante cambios de tasa</div>
-                    </div>
-                    <div class="indicator-card">
-                        <div class="indicator-icon">🔄</div>
-                        <div class="indicator-value">{{ bondMetrics.convexidad | number:'1.1-1' }}</div>
-                        <div class="indicator-label">Convexidad</div>
-                        <div class="indicator-description">Medida de curvatura para cambios amplios de tasa</div>
-                    </div>
-                    <div class="indicator-card highlight">
-                        <div class="indicator-icon">🎯</div>
-                        <div class="indicator-value">{{ bondMetrics.precioMaximo | currency:bondData.moneda:'symbol':'1.0-0' }}</div>
-                        <div class="indicator-label">Precio Máximo</div>
-                        <div class="indicator-description">Precio máximo que pagaría el mercado</div>
-                    </div>
-                </div>
-            </div>
+            <div class="section-subtitle">Representación gráfica de los flujos de caja</div>
         </div>
-
-        <!-- Flujo de Caja -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-title">
-                    💵 Flujo de Caja por Período
-                    <span class="tooltip">
-                        <span class="tooltip-icon">?</span>
-                        <span class="tooltip-text">Detalle completo de todos los flujos de efectivo proyectados durante la vida del bono, incluyendo cupones y amortización.</span>
-                    </span>
-                </div>
-                <div class="section-subtitle">Cronograma detallado de pagos y flujos netos</div>
-            </div>
-            <div class="section-content">
-                <div class="table-container">
-                    <table class="cash-flow-table">
-                        <thead>
-                            <tr>
-                                <th>Período</th>
-                                <th>Fecha de Pago</th>
-                                <th>Cuota</th>
-                                <th>Interés</th>
-                                <th>Amortización</th>
-                                <th>Saldo Pendiente</th>
-                                <th>Flujo Neto</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let row of cashFlowData" [class.highlight-initial]="row.periodo === 0" (click)="showPeriodDetails(row.periodo)">
-                                <td class="period-cell">{{ row.periodo }}</td>
-                                <td>{{ row.fecha }}</td>
-                                <td [ngClass]="{'currency': row.periodo > 0}">{{ row.periodo > 0 ? (row.cuota | currency:bondData.moneda:'symbol':'1.2-2') : '-' }}</td>
-                                <td [ngClass]="{'currency': row.periodo > 0}">{{ row.periodo > 0 ? (row.interes | currency:bondData.moneda:'symbol':'1.2-2') : '-' }}</td>
-                                <td [ngClass]="{'currency': row.periodo > 0}">{{ row.periodo > 0 ? (row.amortizacion | currency:bondData.moneda:'symbol':'1.2-2') : '-' }}</td>
-                                <td class="currency">{{ row.saldoPendiente | currency:bondData.moneda:'symbol':'1.2-2' }}</td>
-                                <td class="currency" [ngClass]="{'positive': row.flujoNeto > 0, 'negative': row.flujoNeto < 0}">{{ row.flujoNeto | currency:bondData.moneda:'symbol':'1.2-2' }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Gráfico de Flujos -->
-        <div class="section">
-            <div class="section-header">
-                <div class="section-title">
-                    📊 Visualización de Flujos
-                </div>
-                <div class="section-subtitle">Representación gráfica de los flujos de caja</div>
-            </div>
-            <div class="section-content">
-                <div class="chart-container">
-                    <canvas id="cashFlowChart"></canvas>
-                </div>
+        <div class="section-content">
+            <div class="chart-container">
+                <canvas id="cashFlowChart"></canvas>
             </div>
         </div>
     </div>
+  </div>
 
-    <div class="actions-bar">
-        <button class="btn btn-secondary" (click)="goBack()">Nuevo Análisis</button>
-        <button class="btn btn-success" (click)="exportToPDF()">Exportar PDF</button>
-        <button class="btn btn-primary" (click)="exportToExcel()">Exportar Excel</button>
-    </div>
-
-    <div class="loading" *ngIf="loading">
-        <div class="spinner"></div>
-        <p>Generando reporte...</p>
-    </div>
+  <div class="actions-bar">
+    <button class="btn btn-secondary" (click)="goToRegister()">Nuevo Análisis</button>
+    <button class="btn btn-success" (click)="exportToPDF()">Exportar PDF</button>
+    <button class="btn btn-primary" (click)="exportToExcel()">Exportar Excel</button>
+  </div>
 </div>
