@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe, PercentPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BonoService } from '../../../../../core/services/bono.service';
+import { ExportService } from '../../../../../core/services/export.service';
 import { Bono, FlujoCaja, IndicadorFinanciero } from '../../../../../core/models/bono.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Chart } from 'chart.js/auto';
@@ -36,6 +37,7 @@ export class BonoResultado implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private bonoService: BonoService,
+    private exportService: ExportService,
     private currencyPipe: CurrencyPipe,
     private datePipe: DatePipe
   ) {}
@@ -123,11 +125,19 @@ export class BonoResultado implements OnInit {
   }
 
   exportToPDF(): void {
-    alert('Función de exportar a PDF no implementada.');
+    if (this.bondData && this.bondMetrics) {
+      this.exportService.exportToPDF(this.bondData, this.cashFlowData, this.bondMetrics);
+    } else {
+      alert('No hay datos disponibles para exportar.');
+    }
   }
 
   exportToExcel(): void {
-    alert('Función de exportar a Excel no implementada.');
+    if (this.bondData && this.bondMetrics) {
+      this.exportService.exportToExcel(this.bondData, this.cashFlowData, this.bondMetrics);
+    } else {
+      alert('No hay datos disponibles para exportar.');
+    }
   }
 
   createCashFlowChart(): void {
