@@ -11,6 +11,12 @@ export class ExportService {
   constructor() { }
 
   exportToPDF(bono: Bono, flujoCaja: FlujoCaja[], indicadores: IndicadorFinanciero): void {
+    // Validar que los datos requeridos estén disponibles
+    if (!bono || !indicadores) {
+      console.error('Datos requeridos no disponibles para exportar a PDF');
+      return;
+    }
+
     const doc = new jsPDF();
     let yPosition = 20;
     const pageWidth = doc.internal.pageSize.width;
@@ -32,13 +38,13 @@ export class ExportService {
     doc.setFont('helvetica', 'normal');
     
     const bonoInfo = [
-      `Moneda: ${bono.moneda}`,
+      `Moneda: ${bono.moneda || 'N/A'}`,
       `Valor Nominal: ${this.formatCurrency(bono.valorNominal, bono.moneda)}`,
       `Valor Comercial: ${this.formatCurrency(bono.valorComercial, bono.moneda)}`,
-      `Frecuencia de Pago: ${this.getFrecuenciaPago(bono.frecuenciaPago)}`,
-      `Número de Años: ${bono.numeroAnios}`,
-      `Tipo de Tasa: ${bono.tipoTasa}`,
-      `Tasa Anual: ${bono.tasaAnual}%`,
+      `Frecuencia de Pago: ${this.getFrecuenciaPago(bono.frecuenciaPago || 1)}`,
+      `Número de Años: ${bono.numeroAnios || 0}`,
+      `Tipo de Tasa: ${bono.tipoTasa || 'N/A'}`,
+      `Tasa Anual: ${bono.tasaAnual || 0}%`,
       `Capitalización: ${bono.capitalizacion || 'N/A'}`,
       `Tasa de Impuesto: ${bono.tasaImpuesto ? bono.tasaImpuesto + '%' : 'N/A'}`,
       `Plazo de Gracia: ${bono.plazoGracia || 0} períodos`,
@@ -69,11 +75,11 @@ export class ExportService {
       doc.setFont('helvetica', 'normal');
       
       const indicadoresInfo = [
-        `TCEA: ${indicadores.tcea.toFixed(4)}%`,
-        `TREA: ${indicadores.trea.toFixed(4)}%`,
-        `Duración: ${indicadores.duracion.toFixed(4)}`,
-        `Duración Modificada: ${indicadores.duracionModificada.toFixed(4)}`,
-        `Convexidad: ${indicadores.convexidad.toFixed(4)}`,
+        `TCEA: ${(indicadores.tcea || 0).toFixed(4)}%`,
+        `TREA: ${(indicadores.trea || 0).toFixed(4)}%`,
+        `Duración: ${(indicadores.duracion || 0).toFixed(4)}`,
+        `Duración Modificada: ${(indicadores.duracionModificada || 0).toFixed(4)}`,
+        `Convexidad: ${(indicadores.convexidad || 0).toFixed(4)}`,
         `Precio Máximo: ${this.formatCurrency(indicadores.precioMaximo, bono.moneda)}`
       ];
 
@@ -120,7 +126,7 @@ export class ExportService {
         }
 
         xPosition = startX;
-        doc.text(flujo.periodo.toString(), xPosition, yPosition);
+        doc.text(flujo.periodo?.toString() || 'N/A', xPosition, yPosition);
         xPosition += columnWidths[0];
         
         doc.text(this.formatCurrency(flujo.cuota, bono.moneda), xPosition, yPosition);
@@ -154,6 +160,12 @@ export class ExportService {
   }
 
   exportToExcel(bono: Bono, flujoCaja: FlujoCaja[], indicadores: IndicadorFinanciero): void {
+    // Validar que los datos requeridos estén disponibles
+    if (!bono || !indicadores) {
+      console.error('Datos requeridos no disponibles para exportar a Excel');
+      return;
+    }
+
     const workbook = XLSX.utils.book_new();
 
     // Hoja 1: Información del Bono
@@ -161,13 +173,13 @@ export class ExportService {
       ['INFORMACIÓN DEL BONO'],
       [''],
       ['Campo', 'Valor'],
-      ['Moneda', bono.moneda],
-      ['Valor Nominal', bono.valorNominal],
-      ['Valor Comercial', bono.valorComercial],
-      ['Frecuencia de Pago', this.getFrecuenciaPago(bono.frecuenciaPago)],
-      ['Número de Años', bono.numeroAnios],
-      ['Tipo de Tasa', bono.tipoTasa],
-      ['Tasa Anual (%)', bono.tasaAnual],
+      ['Moneda', bono.moneda || 'N/A'],
+      ['Valor Nominal', bono.valorNominal || 0],
+      ['Valor Comercial', bono.valorComercial || 0],
+      ['Frecuencia de Pago', this.getFrecuenciaPago(bono.frecuenciaPago || 1)],
+      ['Número de Años', bono.numeroAnios || 0],
+      ['Tipo de Tasa', bono.tipoTasa || 'N/A'],
+      ['Tasa Anual (%)', bono.tasaAnual || 0],
       ['Capitalización', bono.capitalizacion || 'N/A'],
       ['Tasa de Impuesto (%)', bono.tasaImpuesto || 'N/A'],
       ['Plazo de Gracia', bono.plazoGracia || 0],
@@ -186,12 +198,12 @@ export class ExportService {
         ['INDICADORES FINANCIEROS'],
         [''],
         ['Indicador', 'Valor'],
-        ['TCEA (%)', indicadores.tcea],
-        ['TREA (%)', indicadores.trea],
-        ['Duración', indicadores.duracion],
-        ['Duración Modificada', indicadores.duracionModificada],
-        ['Convexidad', indicadores.convexidad],
-        ['Precio Máximo', indicadores.precioMaximo]
+        ['TCEA (%)', indicadores.tcea || 0],
+        ['TREA (%)', indicadores.trea || 0],
+        ['Duración', indicadores.duracion || 0],
+        ['Duración Modificada', indicadores.duracionModificada || 0],
+        ['Convexidad', indicadores.convexidad || 0],
+        ['Precio Máximo', indicadores.precioMaximo || 0]
       ];
 
       const indicadoresSheet = XLSX.utils.aoa_to_sheet(indicadoresData);
@@ -205,11 +217,11 @@ export class ExportService {
 
       flujoCaja.forEach(flujo => {
         flujoData.push([
-          flujo.periodo,
-          flujo.cuota,
-          flujo.interes,
-          flujo.amortizacion,
-          flujo.saldoPendiente,
+          flujo.periodo || 0,
+          flujo.cuota || 0,
+          flujo.interes || 0,
+          flujo.amortizacion || 0,
+          flujo.saldoPendiente || 0,
           flujo.fechaPago ? new Date(flujo.fechaPago).toLocaleDateString() : 'N/A'
         ]);
       });
@@ -251,21 +263,21 @@ export class ExportService {
       ['RESUMEN EJECUTIVO'],
       [''],
       ['Métricas Clave', 'Valor'],
-      ['Valor Nominal', bono.valorNominal],
-      ['Valor Comercial', bono.valorComercial],
-      ['Diferencia', bono.valorComercial - bono.valorNominal],
-      ['TCEA (%)', indicadores ? indicadores.tcea : 'N/A'],
-      ['TREA (%)', indicadores ? indicadores.trea : 'N/A'],
-      ['Duración', indicadores ? indicadores.duracion : 'N/A'],
-      ['Precio Máximo', indicadores ? indicadores.precioMaximo : 'N/A'],
+      ['Valor Nominal', bono.valorNominal || 0],
+      ['Valor Comercial', bono.valorComercial || 0],
+      ['Diferencia', (bono.valorComercial || 0) - (bono.valorNominal || 0)],
+      ['TCEA (%)', indicadores ? indicadores.tcea || 0 : 'N/A'],
+      ['TREA (%)', indicadores ? indicadores.trea || 0 : 'N/A'],
+      ['Duración', indicadores ? indicadores.duracion || 0 : 'N/A'],
+      ['Precio Máximo', indicadores ? indicadores.precioMaximo || 0 : 'N/A'],
       [''],
       ['Análisis de Riesgo'],
-      ['Duración Modificada', indicadores ? indicadores.duracionModificada : 'N/A'],
-      ['Convexidad', indicadores ? indicadores.convexidad : 'N/A'],
+      ['Duración Modificada', indicadores ? indicadores.duracionModificada || 0 : 'N/A'],
+      ['Convexidad', indicadores ? indicadores.convexidad || 0 : 'N/A'],
       [''],
       ['Información del Usuario'],
-      ['Usuario', bono.usuario.nombre || 'N/A'],
-      ['Email', bono.usuario.correo || 'N/A']
+      ['Usuario', bono.usuario?.nombre || 'N/A'],
+      ['Email', bono.usuario?.correo || 'N/A']
     ];
 
     const resumenSheet = XLSX.utils.aoa_to_sheet(resumenData);
@@ -276,7 +288,12 @@ export class ExportService {
     XLSX.writeFile(workbook, fileName);
   }
 
-  private formatCurrency(amount: number, currency: string): string {
+  private formatCurrency(amount: number | null | undefined, currency: string): string {
+    // Validar que amount sea un número válido
+    if (amount === null || amount === undefined || isNaN(amount)) {
+      return 'N/A';
+    }
+
     const currencySymbols: { [key: string]: string } = {
       'PEN': 'S/',
       'USD': '$',
