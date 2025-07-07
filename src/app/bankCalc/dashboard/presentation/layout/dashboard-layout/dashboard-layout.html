@@ -1,0 +1,48 @@
+<div class="layout-container">
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <h3>BankCalc</h3>
+    </div>
+    <ul class="nav-list">
+      <li>
+        <a [routerLink]="['/dashboard']" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="['/dashboard/bond/register']" routerLinkActive="active">
+          <i class="fas fa-plus-circle"></i>
+          <span>Registrar Bono</span>
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="['/dashboard/bond/resultado']" routerLinkActive="active">
+          <i class="fas fa-chart-line"></i>
+          <span>Resultado de Bono</span>
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="['/dashboard/bond/history']" routerLinkActive="active">
+          <i class="fas fa-history"></i>
+          <span>Historial</span>
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="['/dashboard/bond/help']" routerLinkActive="active">
+          <i class="fas fa-question-circle"></i>
+          <span>Ayuda</span>
+        </a>
+      </li>
+    </ul>
+    <div class="sidebar-footer">
+      <a [routerLink]="['/login']">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Cerrar Sesión</span>
+      </a>
+    </div>
+  </nav>
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div> 

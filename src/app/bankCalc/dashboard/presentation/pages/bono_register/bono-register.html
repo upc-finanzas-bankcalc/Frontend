@@ -1,0 +1,248 @@
+<div class="form-container">
+    <div class="header">
+        <h1>Registro de Bono</h1>
+        <p>Configuración de Parámetros Financieros</p>
+    </div>
+
+    <div class="form-content">
+        <div class="validation-summary" [class.show]="showValidationSummary">
+            <h4>Por favor corrige los siguientes errores:</h4>
+            <ul>
+                <li *ngFor="let error of validationErrors">{{ error }}</li>
+            </ul>
+        </div>
+
+        <form [formGroup]="bondForm" (ngSubmit)="onSubmit()" novalidate>
+            <!-- Información Básica -->
+            <div class="form-section">
+                <h2>Información Básica del Bono</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="moneda" class="required">Moneda
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Código de moneda ISO 4217 (ej: USD, PEN, EUR). Solo se permiten monedas válidas según el estándar internacional.</span>
+                            </span>
+                        </label>
+                        <select id="moneda" formControlName="moneda" class="form-control">
+                            <option *ngFor="let currency of currencies" [value]="currency.code">
+                                {{ currency.code }} - {{ currency.name }}
+                            </option>
+                        </select>
+                        <div class="error-message" *ngIf="bondForm.get('moneda')?.errors && bondForm.get('moneda')?.touched">
+                            La moneda es requerida
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="valorNominal" class="required">Valor Nominal
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Valor facial del bono al vencimiento. Debe ser mayor a 0 con hasta 2 decimales.</span>
+                            </span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-prefix">{{ getCurrencySymbol(bondForm.get('moneda')?.value) }}</span>
+                            <input type="number" id="valorNominal" formControlName="valorNominal" class="form-control" 
+                                   min="0.01" step="0.01">
+                        </div>
+                        <div class="error-message" *ngIf="bondForm.get('valorNominal')?.errors && bondForm.get('valorNominal')?.touched">
+                            El valor debe ser mayor a 0
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="valorComercial" class="required">Valor Comercial
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Precio actual de mercado del bono. Puede ser igual, menor o mayor al valor nominal.</span>
+                            </span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-prefix">{{ getCurrencySymbol(bondForm.get('moneda')?.value) }}</span>
+                            <input type="number" id="valorComercial" formControlName="valorComercial" class="form-control" 
+                                   min="0.01" step="0.01">
+                        </div>
+                        <div class="error-message" *ngIf="bondForm.get('valorComercial')?.errors && bondForm.get('valorComercial')?.touched">
+                            El valor debe ser mayor a 0
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración Temporal -->
+            <div class="form-section">
+                <h2>Configuración Temporal</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="numeroAños" class="required">Número de Años
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Plazo total del bono en años. Debe ser un número entero mayor a 0.</span>
+                            </span>
+                        </label>
+                        <input type="number" id="numeroAños" formControlName="numeroAños" class="form-control" 
+                               min="1" step="1">
+                        <div class="error-message" *ngIf="bondForm.get('numeroAños')?.errors && bondForm.get('numeroAños')?.touched">
+                            Debe ser al menos 1 año
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="required">Frecuencia de Pago
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Número de pagos por año. Determina con qué frecuencia se realizarán los pagos de cupones.</span>
+                            </span>
+                        </label>
+                        <div class="frequency-grid">
+                            <div class="frequency-option" *ngFor="let option of frequencyOptions">
+                                <input type="radio" [id]="'freq' + option.value" formControlName="frecuenciaPago" [value]="option.value">
+                                <label [for]="'freq' + option.value" class="frequency-label">
+                                    {{ option.label }}<br><small>({{ option.description }})</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración de Tasas -->
+            <div class="form-section">
+                <h2>Configuración de Tasas</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="tipoTasaInteres" class="required">Tipo de Tasa
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Efectiva: considera el efecto de capitalización. Nominal: requiere especificar frecuencia de capitalización.</span>
+                            </span>
+                        </label>
+                        <select id="tipoTasaInteres" formControlName="tipoTasaInteres" class="form-control">
+                            <option *ngFor="let type of rateTypes" [value]="type.value">{{ type.label }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" *ngIf="showCapitalizacion">
+                        <label for="capitalizacion" class="required">Frecuencia de Capitalización
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Solo requerido para tasa nominal. Indica con qué frecuencia se capitaliza el interés.</span>
+                            </span>
+                        </label>
+                        <select id="capitalizacion" formControlName="capitalizacion" class="form-control">
+                            <option value="mensual">Mensual</option>
+                            <option value="trimestral">Trimestral</option>
+                            <option value="semestral">Semestral</option>
+                            <option value="anual">Anual</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tasaInteresAnual" class="required">Tasa de Interés Anual
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Tasa de interés anual del bono en porcentaje (0-100). Determina los pagos de cupones.</span>
+                            </span>
+                        </label>
+                        <div class="input-group has-suffix">
+                            <input type="number" id="tasaInteresAnual" formControlName="tasaInteresAnual" class="form-control" 
+                                   min="0.01" max="100" step="0.01">
+                            <span class="input-suffix">%</span>
+                        </div>
+                        <div class="error-message" *ngIf="bondForm.get('tasaInteresAnual')?.errors && bondForm.get('tasaInteresAnual')?.touched">
+                            La tasa debe estar entre 0.01% y 100%
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tasaImpuesto">Tasa de Impuesto
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Tasa de impuesto aplicable a los rendimientos (0-100%). Afecta el rendimiento neto.</span>
+                            </span>
+                        </label>
+                        <div class="input-group has-suffix">
+                            <input type="number" id="tasaImpuesto" formControlName="tasaImpuesto" class="form-control" 
+                                   min="0" max="100" step="0.01">
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración de Gracia -->
+            <div class="form-section">
+                <h2>Configuración de Gracia</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="tipoGracia" class="required">Tipo de Gracia
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Total: no se paga capital ni intereses. Parcial: solo se pagan intereses. Ninguno: pagos normales desde el inicio.</span>
+                            </span>
+                        </label>
+                        <select id="tipoGracia" formControlName="tipoGracia" class="form-control">
+                            <option *ngFor="let type of graceTypes" [value]="type.value">{{ type.label }}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" *ngIf="showPlazoGracia">
+                        <label for="plazoGracia" class="required">Períodos de Gracia
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Número de períodos de gracia según la frecuencia de pago seleccionada.</span>
+                            </span>
+                        </label>
+                        <input type="number" id="plazoGracia" formControlName="plazoGracia" class="form-control" 
+                               min="1" step="1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gastos Adicionales -->
+            <div class="form-section">
+                <h2>Gastos Adicionales</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="gastosIniciales">Gastos Iniciales
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Costos adicionales al momento de la emisión o compra del bono (comisiones, tasas, etc.).</span>
+                            </span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-prefix">{{ getCurrencySymbol(bondForm.get('moneda')?.value) }}</span>
+                            <input type="number" id="gastosIniciales" formControlName="gastosIniciales" class="form-control" 
+                                   min="0" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gastosFinales">Gastos Finales
+                            <span class="tooltip">
+                                <span class="tooltip-icon">?</span>
+                                <span class="tooltip-text">Costos adicionales al vencimiento del bono (comisiones de rescate, gastos administrativos, etc.).</span>
+                            </span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-prefix">{{ getCurrencySymbol(bondForm.get('moneda')?.value) }}</span>
+                            <input type="number" id="gastosFinales" formControlName="gastosFinales" class="form-control" 
+                                   min="0" step="0.01">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loading" *ngIf="loading">
+                <div class="spinner"></div>
+                <p>Procesando información del bono...</p>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" (click)="resetForm()">Restablecer</button>
+                <button type="submit" class="btn-primary" [disabled]="loading">Analizar Bono</button>
+            </div>
+        </form>
+    </div>
+</div>
