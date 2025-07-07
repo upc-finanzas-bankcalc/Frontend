@@ -1,0 +1,73 @@
+<div class="help-container">
+  <div class="header">
+    <h1>Centro de Ayuda</h1>
+    <p>Encuentra respuestas y guías para usar Bank Calc.</p>
+  </div>
+
+  <div class="help-content">
+    <!-- Guías de Uso -->
+    <div class="help-section">
+      <h2><i class="fas fa-book-open"></i> Guías de Uso</h2>
+      <div class="guide">
+        <h3>Registro de Bonos</h3>
+        <p>Aprende a ingresar correctamente los parámetros de un bono, como el valor nominal, la tasa de interés y los plazos. Consulta los tooltips (?) en cada campo para obtener información detallada.</p>
+      </div>
+      <div class="guide">
+        <h3>Interpretación de Resultados</h3>
+        <p>Descubre qué significan la TREA, TCEA, Duración y otros indicadores financieros clave para evaluar la rentabilidad y el riesgo de tu bono.</p>
+      </div>
+       <div class="guide">
+        <h3>Historial de Bonos</h3>
+        <p>Consulta, filtra y gestiona todos los bonos que has analizado previamente. Puedes ver un resumen rápido o acceder al detalle completo.</p>
+      </div>
+    </div>
+
+    <!-- Preguntas Frecuentes (FAQ) -->
+    <div class="help-section">
+      <h2><i class="fas fa-question-circle"></i> Preguntas Frecuentes (FAQ)</h2>
+      <div class="faq-item" (click)="toggleFaq(1)">
+        <div class="faq-question">
+          <span>¿Qué es el Valor Nominal de un bono?</span>
+          <i class="fas" [ngClass]="{'fa-chevron-down': activeFaq !== 1, 'fa-chevron-up': activeFaq === 1}"></i>
+        </div>
+        <div class="faq-answer" [class.show]="activeFaq === 1">
+          <p>Es el valor facial del bono, es decir, la cantidad de dinero que el emisor se compromete a devolver al inversor al vencimiento del bono.</p>
+        </div>
+      </div>
+      <div class="faq-item" (click)="toggleFaq(2)">
+        <div class="faq-question">
+          <span>¿Por qué mi Valor Comercial es diferente al Nominal?</span>
+          <i class="fas" [ngClass]="{'fa-chevron-down': activeFaq !== 2, 'fa-chevron-up': activeFaq === 2}"></i>
+        </div>
+        <div class="faq-answer" [class.show]="activeFaq === 2">
+          <p>El Valor Comercial es el precio del bono en el mercado secundario y fluctúa según la oferta, la demanda y los cambios en las tasas de interés del mercado. Puede ser mayor (con prima), menor (con descuento) o igual al valor nominal.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Glosario de Términos -->
+    <div class="help-section">
+      <h2><i class="fas fa-spell-check"></i> Glosario de Términos</h2>
+       <div class="glossary-item">
+        <h3>TCEA (Tasa de Costo Efectivo Anual)</h3>
+        <p>Representa el costo total del financiamiento para el emisor del bono, incluyendo no solo la tasa de interés, sino también todos los costos, comisiones y gastos asociados.</p>
+      </div>
+       <div class="glossary-item">
+        <h3>TREA (Tasa de Rendimiento Efectivo Anual)</h3>
+        <p>Es la rentabilidad real que obtiene el inversor (bonista) en un año, considerando la capitalización de los intereses y reinvirtiendo los cupones.</p>
+      </div>
+       <div class="glossary-item">
+        <h3>Duración</h3>
+        <p>Mide la sensibilidad del precio de un bono ante cambios en las tasas de interés. Se expresa en años y representa el tiempo promedio ponderado para recibir los flujos de efectivo del bono.</p>
+      </div>
+    </div>
+
+    <!-- Contacto y Soporte -->
+    <div class="help-section contact-section">
+      <h2><i class="fas fa-headset"></i> Contacto y Soporte</h2>
+      <p>¿No encontraste lo que buscabas? Nuestro equipo está para ayudarte.</p>
+      <p><strong>Email:</strong> <a href="mailto:soporte&#64;bankcalc.com">soporte&#64;bankcalc.com</a></p>
+      <p><strong>Teléfono:</strong> +51 987 654 321</p>
+    </div>
+  </div>
+</div>

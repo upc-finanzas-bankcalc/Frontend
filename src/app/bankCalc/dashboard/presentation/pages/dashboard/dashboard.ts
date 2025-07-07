@@ -1,6 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js/auto';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 interface CashFlowData {
   period: number;
@@ -13,7 +14,8 @@ interface CashFlowData {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
@@ -156,25 +158,5 @@ export class Dashboard implements OnInit {
         });
       }, 50);
     });
-  }
-
-  navigateTo(route: string): void {
-    switch (route) {
-      case 'register':
-        this.router.navigate(['/bond/register']);
-        break;
-      case 'result':
-        this.router.navigate(['/bond/result']);
-        break;
-      case 'history':
-        this.router.navigate(['/bond/history']);
-        break;
-      case 'help':
-        this.router.navigate(['/help']);
-        break;
-      case 'report':
-        this.router.navigate(['/bond/report']);
-        break;
-    }
   }
 }

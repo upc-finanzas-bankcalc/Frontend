@@ -5,15 +5,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { NgIf } from '@angular/common';
 import { MatError } from '@angular/material/form-field';
-
-interface Usuario {
-  id_usuario?: number;
-  nombre: string;
-  correo: string;
-  contraseña: string;
-  rol: 'admin' | 'usuario';
-  fecha_registro?: Date;
-}
+import { UsuarioService } from '../../../../../core/services/usuario.service';
+import { Usuario } from '../../../../../core/models/usuario.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -33,7 +27,11 @@ export class SignUpComponent implements OnInit {
 
   signUpForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private usuarioService: UsuarioService,
+    private router: Router
+  ) {
     this.signUpForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
@@ -76,14 +74,23 @@ export class SignUpComponent implements OnInit {
 
   onSubmit(): void {
     if (this.signUpForm.valid) {
-      const usuarioData: Usuario = {
-        nombre: this.signUpForm.get('name')?.value,
-        correo: this.signUpForm.get('email')?.value,
-        contraseña: this.signUpForm.get('password')?.value,
-        rol: 'usuario' 
+      const { name, email, password } = this.signUpForm.value;
+      const usuarioData: Partial<Usuario> = {
+        nombre: name,
+        correo: email,
+        contraseña: password,
+        rol: 'usuario'
       };
 
-      console.log('Datos del usuario a registrar:', usuarioData);
+      this.usuarioService.register(usuarioData as Usuario).subscribe({
+        next: (response) => {
+          console.log('Usuario registrado:', response);
+          this.router.navigate(['/login']);
+        },
+        error: (error) => {
+          console.error('Error en el registro:', error);
+        }
+      });
 
     } else {
       this.signUpForm.markAllAsTouched();

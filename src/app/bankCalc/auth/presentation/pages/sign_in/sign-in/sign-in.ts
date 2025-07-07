@@ -6,6 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { NgIf } from '@angular/common';
 import { MatError } from '@angular/material/form-field';
 import { Router } from '@angular/router';
+import { UsuarioService } from '../../../../../core/services/usuario.service';
+import { AuthService } from '../../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -27,7 +29,9 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private usuarioService: UsuarioService,
+    private authService: AuthService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -48,9 +52,18 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     if (this.loginForm.valid) {
-      console.log('Formulario enviado:', this.loginForm.value);
+      const { email, password } = this.loginForm.value;
+      this.usuarioService.login({ correo: email, password_virtual: password }).subscribe({
+        next: (response) => {
+          this.authService.login(response);
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error) => {
+          console.error('Login failed:', error);
+        }
+      });
     } else {
-      this.loginForm.markAllAsTouched(); // muestra errores si se presiona sin tocar campos
+      this.loginForm.markAllAsTouched();
     }
   }
 
